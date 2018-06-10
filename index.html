@@ -41,10 +41,17 @@
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFkZcE2KEr0QC3lxBtsiE7RJAiYoUHIaQ&libraries=places&callback=initMap"></script>
-
+  <script>
+      if('serviceWorker' in navigator) {
+        navigator.serviceWorker
+                 .register('/sw.js')
+                 .then(() => { console.log("Service Worker Registered"); })
+                 .catch((error) => { console.log("Registration failed: " + error); })
+      }
+  </script>
 
   <footer id="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2017 <a id="footer-link" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
 
 </body>

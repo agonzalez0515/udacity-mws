@@ -22,7 +22,7 @@ ul, li {
 	color: #333;
 }
 a {
-	color: #b01ae0;;
+	color: #b01ae0;
 	text-decoration: none;
 }
 a:hover, a:focus {
@@ -56,6 +56,10 @@ header {
   padding: 25px;
   text-align: center;
   text-transform: uppercase;
+}
+
+#footer-link strong {
+  color: #dfbbea;
 }
 /* ====================== Navigation ====================== */
 
@@ -234,6 +238,7 @@ nav h1 a {
   position: absolute;
   width: 100%;
 }
+
 #restaurant-name {
   color: #b01ae0;
   font-family: Arial,sans-serif;
