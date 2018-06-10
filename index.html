@@ -45,12 +45,13 @@
       if('serviceWorker' in navigator) {
         navigator.serviceWorker
                  .register('/sw.js')
-                 .then(function() { console.log("Service Worker Registered"); });
+                 .then(() => { console.log("Service Worker Registered"); })
+                 .catch((error) => { console.log("Registration failed: " + error); })
       }
-      </script>
+  </script>
 
   <footer id="footer">
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+    Copyright (c) 2017 <a id="footer-link" href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
 
 </body>
