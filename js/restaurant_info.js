@@ -119,11 +119,14 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 createReviewHTML = (review) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
-  name.innerHTML = review.name;
+  const strong = document.createElement('strong');
+  strong.innerHTML = review.name;
+  name.appendChild(strong);
   li.appendChild(name);
 
   const date = document.createElement('p');
   date.innerHTML = review.date;
+  date.className = "review-date";
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -144,6 +147,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
+  li.setAttribute('aria-current', 'page')
   breadcrumb.appendChild(li);
 }
 
