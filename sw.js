@@ -23,24 +23,24 @@ const filesToCache = [
 const restaurantCache = 'cache-v3';
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(restaurantCache).then( cache => {
-      return cache.addAll(filesToCache);
-    })
-  );
+    e.waitUntil(
+        caches.open(restaurantCache).then( cache => {
+            return cache.addAll(filesToCache);
+        })
+    );
 });
 
 
 self.addEventListener ('fetch', e => {
-  e.respondWith(
-    caches.open(restaurantCache).then(cache => {
-      return cache.match(e.request).then(response => {
-        // console.log("returning match")
-        return response || fetch(e.request).then(response => {
-          cache.put(e.request, response.clone());
-          return response;
-        });
-      });
-    })
-  );
+    e.respondWith(
+        caches.open(restaurantCache).then(cache => {
+            return cache.match(e.request).then(response => {
+                // console.log("returning match")
+                return response || fetch(e.request).then(response => {
+                    cache.put(e.request, response.clone());
+                    return response;
+                });
+            });
+        })
+    );
 });
