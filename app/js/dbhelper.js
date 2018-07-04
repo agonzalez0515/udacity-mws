@@ -1,3 +1,10 @@
+import idb from 'idb';
+
+const dbPromise = idb.open('restaurants', 1, upgradeDB => {
+  upgradeDB.createObjectStore('restaurants');
+});
+
+
 /**
  * Common database helper functions.
  */
@@ -23,7 +30,6 @@ class DBHelper {
         }
       })
       .then(data => {
-        console.log(data)
         callback(null, data);
       })
       .catch(err => {
@@ -154,7 +160,7 @@ class DBHelper {
       const imgPath = `${restaurant.photograph}.jpg`
       return (`/images/${imgPath}`);
     } else {
-      return (`/images/no-image.svg`)
+      return (`app/images/no-image.svg`)
     }
   }
 
@@ -173,3 +179,4 @@ class DBHelper {
   } 
 }
 
+window.DBHelper = DBHelper;
