@@ -24,6 +24,10 @@ gulp.task('copy-js', function () {
       .pipe(gulp.dest('dist/js'))
 })
 
+gulp.task('copy-images', function () {
+  gulp.src(['app/images/*.jpg', 'app/images/*.svg'])
+      .pipe(gulp.dest('dist/images'))
+})
 
 
 //transpile es6 js
@@ -59,10 +63,11 @@ gulp.task('sw', function () {
 })
 
 gulp.task('watch', function (){
-  gulp.watch('app/js/*.js', ['js']);
-  gulp.watch('app/css/*.css', ['css']);
-  gulp.watch('app/*.html', ['html']);
+  gulp.watch(['app/js/main.js', 'app/js/restaurant_info.js'], ['copy-js']);
+  gulp.watch('app/css/*.css', ['copy-css']);
+  gulp.watch('app/*.html', ['copy-html']);
+  gulp.watch('app/js/dbhelper.js', ['transpile']);
   gulp.watch('app/sw.js', ['sw']);
 })
 
-gulp.task('default', ['copy-html', 'copy-css', 'copy-js', 'transpile', 'minify', 'sw'])
+gulp.task('default', ['copy-html', 'copy-css', 'copy-images', 'copy-js', 'transpile', 'sw'])
