@@ -1,9 +1,8 @@
-
 const filesToCache = [
     '/',
     '/index.html',
+    '/restaurant.html',
     '/css/styles.css',
-    '/data/restaurants.json',
     '/images/1.jpg',
     '/images/2.jpg',
     '/images/3.jpg',
@@ -14,13 +13,14 @@ const filesToCache = [
     '/images/8.jpg',
     '/images/9.jpg',
     '/images/10.jpg',
+    '/images/no-image.svg',
     '/js/dbhelper.js',
     '/js/main.js',
     '/js/restaurant_info.js',
     '/sw.js'
 ];
 
-const restaurantCache = 'cache-v3';
+const restaurantCache = 'cache-v4';
 
 self.addEventListener('install', e => {
     e.waitUntil(
@@ -31,16 +31,16 @@ self.addEventListener('install', e => {
 });
 
 
-self.addEventListener ('fetch', e => {
-    e.respondWith(
-        caches.open(restaurantCache).then(cache => {
-            return cache.match(e.request).then(response => {
-                // console.log("returning match")
-                return response || fetch(e.request).then(response => {
-                    cache.put(e.request, response.clone());
-                    return response;
-                });
-            });
-        })
-    );
-});
+// self.addEventListener ('fetch', e => {
+//     e.respondWith(
+//         caches.open(restaurantCache).then(cache => {
+//             return cache.match(e.request).then(response => {
+//                 // console.log("returning match")
+//                 return response || fetch(e.request).then(response => {
+//                     cache.put(e.request, response.clone());
+//                     return response;
+//                 });
+//             });
+//         })
+//     );
+// });
