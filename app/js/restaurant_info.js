@@ -7,16 +7,17 @@ var newMap
  */
 document.addEventListener('DOMContentLoaded', (event) => {  
   initMap();
+ 
 });
 
 /**
  * Initialize leaflet map
  */
-initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {      
+window.initMap = () => {
+  fetchRestaurantFromURL((er, restaurant) => {
+    if (er) { // Got an error!
+      console.error(er);
+    } else {     
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
         zoom: 16,

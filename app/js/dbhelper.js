@@ -29,8 +29,8 @@ class DBHelper {
           return res.json();
         }
       })
-      .then(data => {
-        callback(null, data);
+      .then(restaurants => {
+        callback(null, restaurants);
       })
       .catch(err => {
         callback(null, err)
@@ -160,7 +160,7 @@ class DBHelper {
       const imgPath = `${restaurant.photograph}.jpg`
       return (`/images/${imgPath}`);
     } else {
-      return (`app/images/no-image.svg`)
+      return (`/images/no-image.svg`)
     }
   }
 
