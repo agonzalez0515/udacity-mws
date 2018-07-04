@@ -1,3 +1,10 @@
+import idb from 'idb';
+
+const dbPromise = idb.open('restaurants', 1, upgradeDB => {
+  upgradeDB.createObjectStore('restaurants');
+});
+
+
 /**
  * Common database helper functions.
  */
@@ -22,9 +29,8 @@ class DBHelper {
           return res.json();
         }
       })
-      .then(data => {
-        console.log(data)
-        callback(null, data);
+      .then(restaurants => {
+        callback(null, restaurants);
       })
       .catch(err => {
         callback(null, err)
@@ -173,3 +179,4 @@ class DBHelper {
   } 
 }
 
+window.DBHelper = DBHelper;
