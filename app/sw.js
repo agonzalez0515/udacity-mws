@@ -1,3 +1,5 @@
+import idb from 'idb';
+
 const filesToCache = [
     '/',
     '/index.html',
@@ -20,27 +22,42 @@ const filesToCache = [
     '/sw.js'
 ];
 
-const restaurantCache = 'cache-v4';
+const restaurantCache = 'cache-v9';
 
 self.addEventListener('install', e => {
-    e.waitUntil(
-        caches.open(restaurantCache).then( cache => {
-            return cache.addAll(filesToCache);
-        })
-    );
+  e.waitUntil(
+    caches.open(restaurantCache).then( cache => {
+      return cache.addAll(filesToCache);
+    })
+  );
 });
 
 
-// self.addEventListener ('fetch', e => {
-//     e.respondWith(
-//         caches.open(restaurantCache).then(cache => {
-//             return cache.match(e.request).then(response => {
-//                 // console.log("returning match")
-//                 return response || fetch(e.request).then(response => {
-//                     cache.put(e.request, response.clone());
-//                     return response;
-//                 });
-//             });
-//         })
-//     );
-// });
+//Offline First
+//intercept the fetch and return anything that matches from the cache. If it's not in the cache, put it in for next time and return response
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.open(restaurantCache).then(cache => {
+      return cache.match(e.request).then(response => {
+        return response || fetch(e.request).then(response => {
+          cache.put(e.request, response.clone())
+          return response
+        })
+      });
+    })
+  ); 
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
