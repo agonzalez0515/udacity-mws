@@ -5,16 +5,12 @@ const source = require('vinyl-source-stream');
 const concat = require('gulp-concat');
 const babel = require('gulp-babel');
 const uglify = require('gulp-uglify')
+const uglifycss = require('gulp-uglifycss');
 
 // copy files
 gulp.task('copy-html', function (){
   gulp.src('app/*.html')
       .pipe(gulp.dest('dist'))
-})
-
-gulp.task('copy-css', function (){
-  gulp.src('app/css/*.css')
-      .pipe(gulp.dest('dist/css'))
 })
 
 gulp.task('copy-js', function () {
@@ -25,10 +21,14 @@ gulp.task('copy-js', function () {
 })
 
 gulp.task('copy-images', function () {
-  gulp.src(['app/images/*.jpg', 'app/images/*.svg'])
+  gulp.src(['app/images/*.jpg', 'app/images/*.svg', 'app/images/*.png'])
       .pipe(gulp.dest('dist/images'))
 })
 
+gulp.task('copy-manifest', function () {
+  gulp.src(['app/manifest.json'])
+      .pipe(gulp.dest('dist'))
+})
 
 //transpile es6 js
 gulp.task('transpile', function () {
@@ -42,13 +42,15 @@ gulp.task('transpile', function () {
       .pipe(gulp.dest('dist/js'))
 });
 
-//minify all js
-gulp.task ('minify', function () {
-  return gulp.src(['dist/js/dbhelper.js', 'dist/js/main.js', 'dist/js/restaurant_info.js'])
-      .pipe(concat('script.js'))
-      // .pipe(uglify({ compress: { drop_console: true } }))
-      .pipe(gulp.dest('dist/js'))
-})
+//uglify CSS
+gulp.task('css', function () {
+  gulp.src('app/css/*.css')
+    .pipe(uglifycss({
+      "maxLineLen": 80,
+      "uglyComments": true
+    }))
+    .pipe(gulp.dest('dist/css'));
+});
 
 //transpile service worker
 gulp.task('sw', function () {
@@ -64,10 +66,10 @@ gulp.task('sw', function () {
 
 gulp.task('watch', function (){
   gulp.watch(['app/js/main.js', 'app/js/restaurant_info.js'], ['copy-js']);
-  gulp.watch('app/css/*.css', ['copy-css']);
+  gulp.watch('app/css/*.css', ['css']);
   gulp.watch('app/*.html', ['copy-html']);
   gulp.watch('app/js/dbhelper.js', ['transpile']);
   gulp.watch('app/sw.js', ['sw']);
 })
 
-gulp.task('default', ['copy-html', 'copy-css', 'copy-images', 'copy-js', 'transpile', 'sw'])
+gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'transpile', 'css', 'sw'])
