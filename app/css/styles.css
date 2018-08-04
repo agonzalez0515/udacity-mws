@@ -199,7 +199,7 @@ header #nav {
 }
 #restaurants-list p {
   margin: 0;
-  font-size: 11pt;
+  font-size: 1.2rem;
 }
 #restaurants-list li a {
   background-color: #b01ae0;
@@ -317,4 +317,10 @@ header #nav {
 #restaurant-hours td {
   color: #666;
   font-size: 1.25rem;
+}
+
+/* Leaflet Override for Accessibility */
+
+.leaflet-container a {
+  color: #8747d0;
 }
