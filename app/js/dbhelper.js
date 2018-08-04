@@ -30,7 +30,6 @@ class DBHelper {
     fetch(DBHelper.DATABASE_URL)
       .then(res => {
         if (res.ok) {
-          console.log(res)
           return res.json();
         }
       })
@@ -46,8 +45,17 @@ class DBHelper {
         callback(null, restaurants);
       })
       .catch(err => {
-        callback(null, err)
-       
+        console.log("fetch failed")
+        // callback(null, err)
+        dbPromise.then(db => {
+          const tx = db.transaction("restaurants", "readonly");
+          const store = tx.objectStore("restaurants");
+          console.log(store)
+          store.getAll().then(restaurantsIdb => {
+            callback(null, restaurantsIdb)
+          })
+          
+        })
       });
   }
 

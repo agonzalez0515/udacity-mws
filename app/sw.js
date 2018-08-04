@@ -36,16 +36,19 @@ self.addEventListener('install', e => {
 //Offline First
 //intercept the fetch and return anything that matches from the cache. If it's not in the cache, put it in for next time and return response
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.open(restaurantCache).then(cache => {
-      return cache.match(e.request).then(response => {
-        return response || fetch(e.request).then(response => {
-          cache.put(e.request, response.clone())
-          return response
-        })
-      });
-    })
-  ); 
+  const requestRestaurants = e.request.url.indexOf("restaurants")
+  if (requestRestaurants === -1) {
+    e.respondWith(
+      caches.open(restaurantCache).then(cache => {
+        return cache.match(e.request).then(response => {
+          return response || fetch(e.request).then(response => {
+            cache.put(e.request, response.clone())
+            return response
+          })
+        });
+      })
+    ); 
+  }
 })
 
 
