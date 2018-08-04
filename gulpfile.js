@@ -4,7 +4,6 @@ const babelify = require('babelify');
 const source = require('vinyl-source-stream');
 const concat = require('gulp-concat');
 const babel = require('gulp-babel');
-const uglify = require('gulp-uglify')
 const uglifycss = require('gulp-uglifycss');
 
 // copy files
@@ -72,4 +71,4 @@ gulp.task('watch', function (){
   gulp.watch('app/sw.js', ['sw']);
 })
 
-gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'transpile', 'css', 'sw'])
+gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'copy-manifest'])
