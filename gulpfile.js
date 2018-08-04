@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const browserify = require('browserify');
 const babelify = require('babelify');
 const source = require('vinyl-source-stream');
-const concat = require('gulp-concat');
 const babel = require('gulp-babel');
 const uglifycss = require('gulp-uglifycss');
 
