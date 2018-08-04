@@ -1,8 +1,12 @@
 import idb from 'idb';
 
 const dbPromise = idb.open('restaurants', 1, upgradeDB => {
-  upgradeDB.createObjectStore('restaurants');
+  switch (upgradeDB.oldVersion) {
+    case 0:
+      upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+  }
 });
+
 
 
 /**
@@ -30,10 +34,28 @@ class DBHelper {
         }
       })
       .then(restaurants => {
+        dbPromise.then(db => {
+          const tx = db.transaction("restaurants", "readwrite");
+          const store = tx.objectStore("restaurants");
+          restaurants.forEach(restaurant => {
+            console.log("putting restaurants in idb")
+            store.put(restaurant)
+          })
+        });
         callback(null, restaurants);
       })
       .catch(err => {
-        callback(null, err)
+        console.log("fetch failed")
+        // callback(null, err)
+        dbPromise.then(db => {
+          const tx = db.transaction("restaurants", "readonly");
+          const store = tx.objectStore("restaurants");
+          console.log(store)
+          store.getAll().then(restaurantsIdb => {
+            callback(null, restaurantsIdb)
+          })
+          
+        })
       });
   }
 
