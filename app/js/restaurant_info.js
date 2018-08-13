@@ -60,6 +60,11 @@ const fetchRestaurantFromURL = (callback) => {
       fillRestaurantHTML();
       callback(null, restaurant)
     });
+
+    DBHelper.fetchReviewsById(id, (error, reviews) => {
+      // fill reviews
+      fillReviewsHTML(reviews);   
+    })
   }
 }
 
@@ -85,8 +90,6 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**

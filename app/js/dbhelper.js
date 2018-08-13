@@ -79,6 +79,18 @@ class DBHelper {
   }
 
   /**
+   * Fetch reviews for a specific restaurant id
+   */
+  static fetchReviewsById(id, callback) {
+    fetch(`http://localhost:1337/restaurants/${id}`)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+  }
+
+  /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
   static fetchRestaurantByCuisine(cuisine, callback) {
