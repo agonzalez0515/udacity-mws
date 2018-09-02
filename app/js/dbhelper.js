@@ -1,9 +1,11 @@
 import idb from 'idb';
 
-const dbPromise = idb.open('restaurants', 1, upgradeDB => {
+const dbPromise = idb.open('restaurants', 2, upgradeDB => {
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+    case 1:
+      upgradeDB.createObjectStore('reviews', {keyPath: 'id'})
   }
 });
 
@@ -50,7 +52,6 @@ class DBHelper {
         dbPromise.then(db => {
           const tx = db.transaction("restaurants", "readonly");
           const store = tx.objectStore("restaurants");
-          console.log(store)
           store.getAll().then(restaurantsIdb => {
             callback(null, restaurantsIdb)
           })
@@ -59,6 +60,7 @@ class DBHelper {
       });
   }
 
+  
   /**
    * Fetch a restaurant by its ID.
    */
@@ -77,6 +79,41 @@ class DBHelper {
       }
     });
   }
+
+  static fetchReviews(callback) {
+    fetch('http://localhost:1337/reviews')
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(reviews=> {
+      console.log()
+      dbPromise.then(db => {
+        const tx = db.transaction("reviews", "readwrite");
+        const store = tx.objectStore("reviews");
+        reviews.forEach(review => {
+          console.log("putting reviews in idb")
+          store.put(review)
+        })
+      });
+      callback(null, reviews);
+    })
+    .catch(err => {
+      console.log("fetch failed")
+      // callback(null, err)
+      dbPromise.then(db => {
+        const tx = db.transaction("reviews", "readonly");
+        const store = tx.objectStore("reviews");
+        console.log(store)
+        store.getAll().then(reviewsIdb => {
+          callback(null, reviewsIdb)
+        })
+        
+      })
+    });
+  }
+
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.

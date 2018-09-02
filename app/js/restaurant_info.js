@@ -67,6 +67,7 @@ const fetchRestaurantFromURL = (callback) => {
  * Create restaurant HTML and add it to the webpage
  */
 const fillRestaurantHTML = (restaurant = self.restaurant) => {
+  
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -85,8 +86,20 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
+
+  DBHelper.fetchReviews((error, reviews) => {
+    if (error) {
+      callback (error, null)
+    } else {
+      console.log(reviews)
+      const reviewsForRestaurant = reviews.filter(review => review.restaurant_id == restaurant.id)  
+      console.log(reviewsForRestaurant);
+      fillReviewsHTML(reviewsForRestaurant);
+    }
+
+  })
   // fill reviews
-  fillReviewsHTML();
+  // fillReviewsHTML();
 }
 
 /**
