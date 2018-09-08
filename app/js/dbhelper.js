@@ -5,7 +5,9 @@ const dbPromise = idb.open('restaurants', 2, upgradeDB => {
     case 0:
       upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
     case 1:
-      upgradeDB.createObjectStore('reviews', {keyPath: 'id'})
+      upgradeDB.createObjectStore('reviews', {keyPath: 'id'});
+    case 2:
+      upgradeDB.createObjectStore('newReviews', {keyPath: 'id'});
   }
 });
 
@@ -88,7 +90,7 @@ class DBHelper {
       }
     })
     .then(reviews=> {
-      console.log()
+      console.log(reviews)
       dbPromise.then(db => {
         const tx = db.transaction("reviews", "readwrite");
         const store = tx.objectStore("reviews");
@@ -235,7 +237,46 @@ class DBHelper {
       });
     marker.addTo(newMap);
     return marker;
-  } 
+  }
+  
+  static saveNewReview(review) {
+    fetch('http://localhost:1337/reviews',
+     {method: 'POST',
+      body: JSON.stringify(review)})
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(response => {
+      console.log('Success:', JSON.stringify(response))
+      // dbPromise.then(db => {
+      //   const tx = db.transaction("reviews", "readwrite");
+      //   const store = tx.objectStore("reviews");
+      //   reviews.forEach(review => {
+      //     console.log("putting reviews in idb")
+      //     store.put(review)
+      //   })
+      // });
+      // callback(null, reviews);
+    })
+    .catch(err => {
+      console.error('Error:', err)
+      // dbPromise.then(db => {
+      //   const tx = db.transaction("reviews", "readonly");
+      //   const store = tx.objectStore("reviews");
+      //   console.log(store)
+      //   store.getAll().then(reviewsIdb => {
+      //     callback(null, reviewsIdb)
+      //   })
+        
+      // })
+    });
+    
+    
+  }
 }
+
+
 
 window.DBHelper = DBHelper;

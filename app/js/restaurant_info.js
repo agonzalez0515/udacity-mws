@@ -91,9 +91,8 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     if (error) {
       callback (error, null)
     } else {
-      console.log(reviews)
-      const reviewsForRestaurant = reviews.filter(review => review.restaurant_id == restaurant.id)  
-      console.log(reviewsForRestaurant);
+      const reviewsForRestaurant = reviews.filter(review => review.restaurant_id == restaurant.id)
+      console.log(reviewsForRestaurant)
       fillReviewsHTML(reviewsForRestaurant);
     }
 

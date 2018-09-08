@@ -49,6 +49,23 @@
     <!-- end restaurant -->
     <!-- Beginning reviews -->
     <section id="reviews-container">
+      <div class="form-container">
+        <form id="reviews-form" method="POST">
+          <p><label for="name">Name:</label>
+          <input id="name" type="text" name="name"></p>
+          <p><label for="rating>">Select Rating:</label></p>
+            <p><select id="rating" name="rating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select></p>
+          <p><label for="user-review">Your Review:</label><br>
+          <textarea id="user-review" name="review"></textarea></p>
+          <p><input type="submit" id="submit-form"></input></p>
+        </form>
+      </div>
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->
@@ -69,6 +86,7 @@
   <!-- Beginning scripts -->
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/restaurant_info.js"></script>
+  <script type="application/javascript" charset="utf-8" src="js/reviews.js"></script>
 
   <script>
     if('serviceWorker' in navigator) {
