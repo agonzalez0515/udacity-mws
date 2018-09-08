@@ -26,7 +26,7 @@ const filesToCache = [
     '/sw.js'
 ];
 
-const restaurantCache = 'cache-v9';
+const restaurantCache = 'cache-v10';
 
 self.addEventListener('install', e => {
   e.waitUntil(
