@@ -82,8 +82,10 @@ class DBHelper {
     });
   }
 
-  static fetchReviews(callback) {
-    fetch('http://localhost:1337/reviews')
+
+
+  static fetchReviewsById(id, callback) {
+    fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
     .then(res => {
       if (res.ok) {
         return res.json();
@@ -187,7 +189,6 @@ class DBHelper {
       }
     });
   }
-
   /**
    * Fetch all cuisines with proper error handling.
    */

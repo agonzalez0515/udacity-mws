@@ -86,19 +86,15 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-
-  DBHelper.fetchReviews((error, reviews) => {
+  //fill reviews 
+  DBHelper.fetchReviewsById(restaurant.id, (error, reviews) => {
     if (error) {
       callback (error, null)
     } else {
-      const reviewsForRestaurant = reviews.filter(review => review.restaurant_id == restaurant.id)
-      console.log(reviewsForRestaurant)
-      fillReviewsHTML(reviewsForRestaurant);
+      fillReviewsHTML(reviews);
     }
 
   })
-  // fill reviews
-  // fillReviewsHTML();
 }
 
 /**
