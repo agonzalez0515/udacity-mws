@@ -29,6 +29,7 @@ form.addEventListener("submit", function (event) {
   // console.log(reviewObj)
   DBHelper.saveNewReview(reviewObj);
   
+  location.reload(true);
 });
 
 
