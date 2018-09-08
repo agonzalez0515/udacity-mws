@@ -6,24 +6,24 @@ const babel = require('gulp-babel');
 const uglifycss = require('gulp-uglifycss');
 
 // copy files
-gulp.task('copy-html', function (){
+gulp.task('copy-html', function() {
   gulp.src('app/*.html')
       .pipe(gulp.dest('dist'))
 })
 
-gulp.task('copy-js', function () {
-  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js'])
+gulp.task('copy-js', function() {
+  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js', 'app/js/reviews.js'])
       .pipe(babel({
         presets: ['env']}))
       .pipe(gulp.dest('dist/js'))
 })
 
-gulp.task('copy-images', function () {
+gulp.task('copy-images', function() {
   gulp.src(['app/images/*.jpg', 'app/images/*.svg', 'app/images/*.png'])
       .pipe(gulp.dest('dist/images'))
 })
 
-gulp.task('copy-manifest', function () {
+gulp.task('copy-manifest', function() {
   gulp.src(['app/manifest.json'])
       .pipe(gulp.dest('dist'))
 })
