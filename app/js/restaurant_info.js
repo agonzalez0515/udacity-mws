@@ -196,3 +196,21 @@ const getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/**
+ * Update favorite 
+ */
+const restaurant_id = getParameterByName('id');
+const clickedFav = document.getElementById('toggle-heart') 
+
+clickedFav.addEventListener('change', function() {
+  if(this.checked) {
+    fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=true`,{
+      method: 'PUT'
+    });
+  } else {
+    fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=false`,{
+      method: 'PUT'
+    });
+  }
+})
