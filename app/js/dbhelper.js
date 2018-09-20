@@ -269,7 +269,7 @@ class DBHelper {
       })
     })
     .catch(err => {
-      console.error('Error:', err)
+      console.error('Error:', err.message)
 
     });
   }
