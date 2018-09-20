@@ -1,9 +1,13 @@
 import idb from 'idb';
 
-const dbPromise = idb.open('restaurants', 1, upgradeDB => {
+const dbPromise = idb.open('restaurants', 2, upgradeDB => {
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+    case 1:
+      upgradeDB.createObjectStore('reviews', {keyPath: 'id'});
+    case 2:
+      upgradeDB.createObjectStore('newReviews', {keyPath: 'id', autoIncrement: true});
   }
 });
 
@@ -50,7 +54,6 @@ class DBHelper {
         dbPromise.then(db => {
           const tx = db.transaction("restaurants", "readonly");
           const store = tx.objectStore("restaurants");
-          console.log(store)
           store.getAll().then(restaurantsIdb => {
             callback(null, restaurantsIdb)
           })
@@ -59,6 +62,7 @@ class DBHelper {
       });
   }
 
+  
   /**
    * Fetch a restaurant by its ID.
    */
@@ -77,6 +81,43 @@ class DBHelper {
       }
     });
   }
+
+
+
+  static fetchReviewsById(id, callback) {
+    fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(reviews=> {
+      console.log(reviews)
+      dbPromise.then(db => {
+        const tx = db.transaction("reviews", "readwrite");
+        const store = tx.objectStore("reviews");
+        reviews.forEach(review => {
+          console.log("putting reviews in idb")
+          store.put(review)
+        })
+      });
+      callback(null, reviews);
+    })
+    .catch(err => {
+      console.log("fetch failed")
+      // callback(null, err)
+      dbPromise.then(db => {
+        const tx = db.transaction("reviews", "readonly");
+        const store = tx.objectStore("reviews");
+        console.log(store)
+        store.getAll().then(reviewsIdb => {
+          callback(null, reviewsIdb)
+        })
+        
+      })
+    });
+  }
+
 
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
@@ -148,7 +189,6 @@ class DBHelper {
       }
     });
   }
-
   /**
    * Fetch all cuisines with proper error handling.
    */
@@ -198,7 +238,83 @@ class DBHelper {
       });
     marker.addTo(newMap);
     return marker;
-  } 
+  }
+  
+  static saveNewReview(review) {
+    dbPromise.then(db => {
+        console.log("open idb")
+        const tx = db.transaction("newReviews", "readwrite");
+        const store = tx.objectStore("newReviews");
+        console.log(store)
+        console.log("review: " + JSON.stringify(review))
+        store.put(review)
+        console.log("in idb")
+        return tx.complete;
+      })
+    .then(DBHelper.syncReview())
+    .catch(err => {
+      console.error('Error:', err)  
+    });
+    
+  }
+
+  static syncReview() {
+    console.log("sync review - open idb")
+    dbPromise.then(db => {
+      const tx = db.transaction("newReviews", "readonly");
+      const store = tx.objectStore("newReviews");
+      store.getAll().then(newReviews => {
+        console.log(newReviews)
+        DBHelper.sendNewReviews(newReviews)
+      })
+    })
+    .catch(err => {
+      console.error('Error:', err)
+
+    });
+  }
+
+  static sendNewReviews(reviews) {
+    console.log(reviews)
+    if (reviews.length > 0) {
+      reviews.forEach(review => {
+        fetch('http://localhost:1337/reviews',
+        {method: 'POST',
+        body: JSON.stringify(review)})
+        .then(res => {
+          console.log("review sent - delete from idb")
+          console.log(res)
+          if (res.ok) {
+            dbPromise.then(db => {
+              const tx = db.transaction("newReviews", "readwrite");
+              const store = tx.objectStore("newReviews");
+              store.delete(review.id)
+            })
+          }
+        })
+        .catch(err => {
+          console.log("Error: " + err)
+          const offlineMsg = "Oops, you're offline. Your review is saved and will be uploaded once connection is restablished."
+          alertify.error(offlineMsg, 5, function(){  console.log('dismissed'); });
+          
+          setTimeout(DBHelper.syncReview, 5000)
+          // location.reload(true);
+        })
+      })
+    }
+  }
 }
 
+
 window.DBHelper = DBHelper;
+
+
+
+//submit form
+//get data and create object
+//open idb and store it
+//then post it to server
+//if fails, let the user know it will be saved and uploaded later
+//if success, delete from idb
+
+

@@ -67,6 +67,7 @@ const fetchRestaurantFromURL = (callback) => {
  * Create restaurant HTML and add it to the webpage
  */
 const fillRestaurantHTML = (restaurant = self.restaurant) => {
+  
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -85,8 +86,15 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
+  //fill reviews 
+  DBHelper.fetchReviewsById(restaurant.id, (error, reviews) => {
+    if (error) {
+      callback (error, null)
+    } else {
+      fillReviewsHTML(reviews);
+    }
+
+  })
 }
 
 /**
@@ -135,6 +143,7 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  * Create review HTML and add it to the webpage.
  */
 const createReviewHTML = (review) => {
+
   const li = document.createElement('li');
   const name = document.createElement('p');
   const strong = document.createElement('strong');
@@ -142,8 +151,14 @@ const createReviewHTML = (review) => {
   name.appendChild(strong);
   li.appendChild(name);
 
+  //build review date
+  const created = new Date(review.createdAt);
+  const day = created.getDate();
+  const month = created.getMonth() + 1;
+  const year = created.getFullYear();
+  
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = `${month}-${day}-${year}`
   date.className = "review-date";
   li.appendChild(date);
 
