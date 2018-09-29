@@ -44,7 +44,7 @@ self.addEventListener('fetch', e => {
   if (requestRestaurants === -1) {
     e.respondWith(
       caches.open(restaurantCache).then(cache => {
-        return cache.match(e.request).then(response => {
+        return cache.match(e.request, {ignoreSearch: true}).then(response => {
           return response || fetch(e.request).then(response => {
             cache.put(e.request, response.clone())
             return response
