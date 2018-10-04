@@ -12,7 +12,7 @@ gulp.task('copy-html', function() {
 })
 
 gulp.task('copy-js', function() {
-  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js', 'app/js/reviews.js'])
+  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js'])
       .pipe(babel({
         presets: ['env']}))
       .pipe(gulp.dest('dist/js'))
