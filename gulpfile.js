@@ -62,6 +62,17 @@ gulp.task('sw', function () {
     .pipe(gulp.dest('dist/'))
 })
 
+gulp.task('register', function () {
+  return browserify({entries: 'app/register.js', debug: true})
+    .transform(babelify, {presets: ['env']})
+    .bundle()
+    .on('error', function (error) {
+      console.log(error)
+    })
+    .pipe(source('register.js'))
+    .pipe(gulp.dest('dist/'))
+})
+
 gulp.task('watch', function (){
   gulp.watch(['app/js/main.js', 'app/js/restaurant_info.js'], ['copy-js']);
   gulp.watch('app/css/*.css', ['css']);
@@ -70,4 +81,4 @@ gulp.task('watch', function (){
   gulp.watch('app/sw.js', ['sw']);
 })
 
-gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'copy-manifest'])
+gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'register', 'copy-manifest'])
