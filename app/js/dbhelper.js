@@ -229,81 +229,19 @@ class DBHelper {
   /**
    * Map marker for a restaurant.
    */
-  static mapMarkerForRestaurant(restaurant, map) {
-    // https://leafletjs.com/reference-1.3.0.html#marker  
-    const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
-      {title: restaurant.name,
-        alt: restaurant.name,
-        url: DBHelper.urlForRestaurant(restaurant)
-      });
-    marker.addTo(newMap);
-    return marker;
-  }
-  
-  static saveNewReview(review) {
-    dbPromise.then(db => {
-        console.log("open idb")
-        const tx = db.transaction("newReviews", "readwrite");
-        const store = tx.objectStore("newReviews");
-        console.log(store)
-        console.log("review: " + JSON.stringify(review))
-        store.put(review)
-        console.log("in idb")
-        return tx.complete;
-      })
-    .then(DBHelper.syncReview())
-    .catch(err => {
-      console.error('Error:', err)  
-    });
-    
-  }
-
-  static syncReview() {
-    console.log("sync review - open idb")
-    dbPromise.then(db => {
-      const tx = db.transaction("newReviews", "readonly");
-      const store = tx.objectStore("newReviews");
-      store.getAll().then(newReviews => {
-        console.log(newReviews)
-        DBHelper.sendNewReviews(newReviews)
-      })
-    })
-    .catch(err => {
-      console.error('Error:', err.message)
-
-    });
-  }
-
-  static sendNewReviews(reviews) {
-    console.log(reviews)
-    if (reviews.length > 0) {
-      reviews.forEach(review => {
-        fetch('http://localhost:1337/reviews',
-        {method: 'POST',
-        body: JSON.stringify(review)})
-        .then(res => {
-          console.log("review sent - delete from idb")
-          console.log(res)
-          if (res.ok) {
-            dbPromise.then(db => {
-              const tx = db.transaction("newReviews", "readwrite");
-              const store = tx.objectStore("newReviews");
-              store.delete(review.id)
-            })
-          }
-        })
-        .catch(err => {
-          console.log("Error: " + err)
-          const offlineMsg = "Oops, you're offline. Your review is saved and will be uploaded once connection is restablished."
-          alertify.error(offlineMsg, 5, function(){  console.log('dismissed'); });
-          
-          setTimeout(DBHelper.syncReview, 5000)
-          // location.reload(true);
-        })
-      })
+    static mapMarkerForRestaurant(restaurant, map) {
+      // https://leafletjs.com/reference-1.3.0.html#marker  
+      const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
+        {title: restaurant.name,
+          alt: restaurant.name,
+          url: DBHelper.urlForRestaurant(restaurant)
+        });
+      marker.addTo(newMap);
+      return marker;
     }
   }
-}
+
+
 
 
 window.DBHelper = DBHelper;

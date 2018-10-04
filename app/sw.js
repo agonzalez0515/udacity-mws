@@ -1,5 +1,16 @@
 import idb from 'idb';
 
+const dbPromise = idb.open('restaurants', 2, upgradeDB => {
+  switch (upgradeDB.oldVersion) {
+    case 0:
+      upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+    case 1:
+      upgradeDB.createObjectStore('reviews', {keyPath: 'id'});
+    case 2:
+      upgradeDB.createObjectStore('newReviews', {keyPath: 'id', autoIncrement: true});
+  }
+});
+
 const filesToCache = [
     '/',
     '/index.html',
@@ -59,12 +70,53 @@ self.addEventListener('fetch', e => {
 
 self.addEventListener('sync', event => {
   if (event.tag == 'syncReviews') {
-    // event.waitUntil(postReviews(reviews));
+    event.waitUntil(getNewReviews());
     console.log("hi from the sw")
   }
 });
 
 
+function getNewReviews() {
+  console.log("sync review - open idb")
+  dbPromise.then(db => {
+    const tx = db.transaction("newReviews", "readonly");
+    const store = tx.objectStore("newReviews");
+    store.getAll().then(newReviews => {
+      console.log(newReviews)
+      postReviews(newReviews)
+    })
+  })
+  .catch(err => {
+    console.error('Error:', err.message)
+  });
+}
+
+
+function postReviews(reviews) {
+  console.log(reviews)
+    if (reviews.length > 0) {
+      reviews.forEach(review => {
+        fetch('http://localhost:1337/reviews',
+        {method: 'POST',
+        body: JSON.stringify(review)})
+        .then(res => {
+          console.log("review sent - delete from idb")
+          console.log(res)
+          if (res.ok) {
+            dbPromise.then(db => {
+              const tx = db.transaction("newReviews", "readwrite");
+              const store = tx.objectStore("newReviews");
+              store.delete(review.id)
+            })
+          }
+        })
+        .catch(err => {
+          console.log("Error: " + err)
+          // location.reload(true);
+        })
+      })
+    }
+};
 
 
 
