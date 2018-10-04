@@ -79,6 +79,7 @@ gulp.task('watch', function (){
   gulp.watch('app/*.html', ['copy-html']);
   gulp.watch('app/js/dbhelper.js', ['transpile']);
   gulp.watch('app/sw.js', ['sw']);
+  gulp.watch('app/register.js', ['register']);
 })
 
 gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'register', 'copy-manifest'])
