@@ -57,7 +57,12 @@ self.addEventListener('fetch', e => {
 
 
 
-
+self.addEventListener('sync', event => {
+  if (event.tag == 'syncReviews') {
+    // event.waitUntil(postReviews(reviews));
+    console.log("hi from the sw")
+  }
+});
 
 
 
