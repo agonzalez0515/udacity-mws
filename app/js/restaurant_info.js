@@ -86,6 +86,8 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
+
+  fillLikeStatus();
   //fill reviews 
   DBHelper.fetchReviewsById(restaurant.id, (error, reviews) => {
     if (error) {
@@ -97,6 +99,11 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   })
 }
 
+const fillLikeStatus = (likeStatus = self.restaurant.is_favorite) => {
+  console.log("is_favorite: " + likeStatus)
+  const heart = document.getElementById("toggle-heart");
+  heart.checked = likeStatus; 
+}
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
@@ -199,21 +206,3 @@ const getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
-
-/**
- * Update favorite 
- */
-const restaurant_id = getParameterByName('id');
-const clickedFav = document.getElementById('toggle-heart') 
-
-clickedFav.addEventListener('change', function() {
-  if(this.checked) {
-    fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=true`,{
-      method: 'PUT'
-    });
-  } else {
-    fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=false`,{
-      method: 'PUT'
-    });
-  }
-})

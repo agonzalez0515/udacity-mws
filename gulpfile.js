@@ -12,7 +12,7 @@ gulp.task('copy-html', function() {
 })
 
 gulp.task('copy-js', function() {
-  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js', 'app/js/reviews.js'])
+  gulp.src(['app/js/main.js', 'app/js/restaurant_info.js'])
       .pipe(babel({
         presets: ['env']}))
       .pipe(gulp.dest('dist/js'))
@@ -62,12 +62,24 @@ gulp.task('sw', function () {
     .pipe(gulp.dest('dist/'))
 })
 
+gulp.task('register', function () {
+  return browserify({entries: 'app/register.js', debug: true})
+    .transform(babelify, {presets: ['env']})
+    .bundle()
+    .on('error', function (error) {
+      console.log(error)
+    })
+    .pipe(source('register.js'))
+    .pipe(gulp.dest('dist/'))
+})
+
 gulp.task('watch', function (){
   gulp.watch(['app/js/main.js', 'app/js/restaurant_info.js'], ['copy-js']);
   gulp.watch('app/css/*.css', ['css']);
   gulp.watch('app/*.html', ['copy-html']);
   gulp.watch('app/js/dbhelper.js', ['transpile']);
   gulp.watch('app/sw.js', ['sw']);
+  gulp.watch('app/register.js', ['register']);
 })
 
-gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'copy-manifest'])
+gulp.task('default', ['copy-html', 'copy-images', 'copy-js', 'css', 'transpile', 'sw', 'register', 'copy-manifest'])
