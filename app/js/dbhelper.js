@@ -1,13 +1,15 @@
 import idb from 'idb';
 
-const dbPromise = idb.open('restaurants', 2, upgradeDB => {
+const dbPromise = idb.open('restaurants', 3, upgradeDB => {
   switch (upgradeDB.oldVersion) {
     case 0:
-      upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+      upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
     case 1:
-      upgradeDB.createObjectStore('reviews', {keyPath: 'id'});
+      upgradeDB.createObjectStore('reviews', { keyPath: 'id' });
     case 2:
-      upgradeDB.createObjectStore('newReviews', {keyPath: 'id', autoIncrement: true});
+      upgradeDB.createObjectStore('newReviews', { keyPath: 'id', autoIncrement: true });
+    case 3:
+      upgradeDB.createObjectStore('likes', { keyPath: 'id', autoIncrement: true });
   }
 });
 
@@ -239,6 +241,7 @@ class DBHelper {
       marker.addTo(newMap);
       return marker;
     }
+
   }
 
 

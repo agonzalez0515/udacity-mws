@@ -1,13 +1,15 @@
 import idb from 'idb';
 
-const dbPromise = idb.open('restaurants', 2, upgradeDB => {
+const dbPromise = idb.open('restaurants', 3, upgradeDB => {
   switch (upgradeDB.oldVersion) {
     case 0:
-      upgradeDB.createObjectStore('restaurants', {keyPath: 'id'});
+      upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
     case 1:
-      upgradeDB.createObjectStore('reviews', {keyPath: 'id'});
+      upgradeDB.createObjectStore('reviews', { keyPath: 'id' });
     case 2:
-      upgradeDB.createObjectStore('newReviews', {keyPath: 'id', autoIncrement: true});
+      upgradeDB.createObjectStore('newReviews', { keyPath: 'id', autoIncrement: true });
+    case 3:
+      upgradeDB.createObjectStore('likes', { keyPath: 'id', autoIncrement: true });
   }
 });
 
@@ -66,23 +68,55 @@ self.addEventListener('fetch', e => {
   }
 })
 
+self.addEventListener('sync', event => {
+  if (event.tag == 'likes') {
+    event.waitUntil(getLikes());
+    
+  }
+})
 
+function getLikes() {
+  dbPromise.then(db => {
+    const tx = db.transaction("likes", "readonly");
+    const store = tx.objectStore("likes");
+    store.getAll().then(likes => {
+      postLikes(likes);
+    })
+  })
+}
+
+
+function postLikes(likes) {
+  if (likes.length > 0) {
+    likes.forEach(likeObj => {
+      let {like, restaurant_id} = likeObj;
+      fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=${like}`, { method: 'PUT'})
+      .then (res => {
+        if (res.ok) {
+          dbPromise.then(db => {
+            const tx = db.transaction("likes", "readwrite");
+            const store = tx.objectStore("likes");
+            store.delete(likeObj.id)
+            console.log("like deleted from idb")
+          })
+        }
+      })
+    })
+  }
+}
 
 self.addEventListener('sync', event => {
   if (event.tag == 'syncReviews') {
     event.waitUntil(getNewReviews());
-    console.log("hi from the sw")
   }
 });
 
 
 function getNewReviews() {
-  console.log("sync review - open idb")
   dbPromise.then(db => {
     const tx = db.transaction("newReviews", "readonly");
     const store = tx.objectStore("newReviews");
     store.getAll().then(newReviews => {
-      console.log(newReviews)
       postReviews(newReviews)
     })
   })
@@ -117,11 +151,3 @@ function postReviews(reviews) {
       })
     }
 };
-
-
-
-
-
-
-
-

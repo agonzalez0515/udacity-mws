@@ -1,6 +1,6 @@
 import idb from 'idb';
 
-const dbPromise = idb.open('restaurants', 2, upgradeDB => {
+const dbPromise = idb.open('restaurants', 3, upgradeDB => {
   switch (upgradeDB.oldVersion) {
     case 0:
       upgradeDB.createObjectStore('restaurants', { keyPath: 'id' });
@@ -8,16 +8,33 @@ const dbPromise = idb.open('restaurants', 2, upgradeDB => {
       upgradeDB.createObjectStore('reviews', { keyPath: 'id' });
     case 2:
       upgradeDB.createObjectStore('newReviews', { keyPath: 'id', autoIncrement: true });
+    case 3:
+      upgradeDB.createObjectStore('likes', { keyPath: 'id', autoIncrement: true });
   }
 });
+
+let restID = window.location.href.split('?')[1].split('=')[1];
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('sw.js')
     .then(reg => {
-      const form = document.getElementById("reviews-form");
 
-      form.addEventListener("submit", function (event) {
+      const heartBtn = document.getElementById("toggle-heart")
+      heartBtn.addEventListener("click", event => {
+        console.log("clicked heart")
+        console.log(event.target.checked)
+        let like = {};
+        like.id = Date.now();
+        like.like = event.target.checked;
+        like.restaurant_id = parseInt(restID);
+        
+        saveLike(like);
+        reg.sync.register("likes");
+      })
+
+      const form = document.getElementById("reviews-form");
+      form.addEventListener("submit", event => {
         event.preventDefault();
         let formData = new FormData(document.getElementById("reviews-form"));
         formData = formData.entries();
@@ -28,7 +45,7 @@ if ('serviceWorker' in navigator) {
           obj = formData.next();
         }
 
-        let restID = window.location.href.split('?')[1].split('=')[1];
+        
         let reviewObj = {};
         reviewObj.id = Date.now();
         reviewObj.restaurant_id = parseInt(restID);
@@ -37,8 +54,7 @@ if ('serviceWorker' in navigator) {
         reviewObj.comments = retrieved.review;
 
         saveNewReview(reviewObj);
-
-        return reg.sync.register('syncReviews');
+        reg.sync.register("syncReviews");
       });
     })
     .then(() => {
@@ -51,15 +67,24 @@ if ('serviceWorker' in navigator) {
 
 function saveNewReview(review) {
   dbPromise.then(db => {
-    console.log("open idb")
     const tx = db.transaction("newReviews", "readwrite");
     const store = tx.objectStore("newReviews");
-    console.log(store)
-    console.log("review: " + JSON.stringify(review))
     store.put(review)
-    console.log("in idb")
+    return tx.complete;
   })
     .catch(err => {
       console.error('Error:', err)
     });
+}
+
+function saveLike(like) {
+  dbPromise.then(db => {
+    const tx = db.transaction("likes", "readwrite");
+    const store = tx.objectStore("likes");
+    store.put(like)
+    return tx.complete;
+  })
+  .catch(err => {
+    console.log("Error:" + err)
+  })
 }
