@@ -25,8 +25,8 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL () {
-    const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    
+    return `https://guarded-ocean-78745.herokuapp.com/restaurants`;
   }
 
   /**
@@ -87,7 +87,7 @@ class DBHelper {
 
 
   static fetchReviewsById(id, callback) {
-    fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`)
+    fetch(`https://guarded-ocean-78745.herokuapp.com/reviews/?restaurant_id=${id}`)
     .then(res => {
       if (res.ok) {
         return res.json();
