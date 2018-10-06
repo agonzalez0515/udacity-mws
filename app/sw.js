@@ -90,7 +90,7 @@ function postLikes(likes) {
   if (likes.length > 0) {
     likes.forEach(likeObj => {
       let {like, restaurant_id} = likeObj;
-      fetch(`http://localhost:1337/restaurants/${restaurant_id}/?is_favorite=${like}`, { method: 'PUT'})
+      fetch(`https://guarded-ocean-78745.herokuapp.com/restaurants/${restaurant_id}/?is_favorite=${like}`, { method: 'PUT'})
       .then (res => {
         if (res.ok) {
           dbPromise.then(db => {
@@ -130,7 +130,7 @@ function postReviews(reviews) {
   console.log(reviews)
     if (reviews.length > 0) {
       reviews.forEach(review => {
-        fetch('http://localhost:1337/reviews',
+        fetch('https://guarded-ocean-78745.herokuapp.com/reviews',
         {method: 'POST',
         body: JSON.stringify(review)})
         .then(res => {
